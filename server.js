@@ -21,6 +21,14 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ extended: false }));
 
 const anthropic = new Anthropic.default({ apiKey: process.env.ANTHROPIC_API_KEY });
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+const THINKING_MESSAGES = [
+  "Un momento, déjame pensar en la mejor respuesta para ti... 🤔",
+  "Dame un segundo, estoy en eso... ✨",
+  "Consultando mis apuntes de Santiago... 📍",
+  "Justo lo que necesitaba preguntarme, dame un momento... 💬",
+];
 
 const MODEL = "claude-haiku-4-5";
 const MAX_TURNS = 10;
@@ -107,6 +115,14 @@ app.post("/webhook", async (req, res) => {
       conv.messages = conv.messages.slice(-MAX_TURNS * 2);
     }
 
+    // Enviar mensaje de "pensando" antes de llamar a Claude
+    const thinkingMsg = THINKING_MESSAGES[Math.floor(Math.random() * THINKING_MESSAGES.length)];
+    await twilioClient.messages.create({
+      from: process.env.TWILIO_WHATSAPP_NUMBER,
+      to: from,
+      body: thinkingMsg,
+    });
+
     const response = await anthropic.messages.create({
       model: MODEL,
       max_tokens: 1024,
@@ -125,13 +141,10 @@ app.post("/webhook", async (req, res) => {
     // Guardar en historial el texto limpio (sin etiquetas)
     conv.messages.push({ role: "assistant", content: cleanText });
 
-    // Mensaje de texto principal
-    twiml.message(cleanText);
-
-    // Mensajes de imagen (uno por etiqueta detectada)
-    for (const key of imageKeys) {
-      const imageUrl = IMAGE_BASE_URL + IMAGE_MAP[key] + "?raw=true";
-      const msg = twiml.message("");
+    // Mensaje de texto + imagen combinados en uno solo
+    const msg = twiml.message(cleanText);
+    if (imageKeys.length > 0) {
+      const imageUrl = IMAGE_BASE_URL + IMAGE_MAP[imageKeys[0]] + "?raw=true";
       msg.media(imageUrl);
     }
   } catch (err) {
