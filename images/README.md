@@ -1,0 +1,1 @@
+Imágenes del Depto 611 para envío automático por WhatsApp

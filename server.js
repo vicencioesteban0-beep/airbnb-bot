@@ -26,6 +26,31 @@ const MODEL = "claude-haiku-4-5";
 const MAX_TURNS = 10;
 const INACTIVITY_MS = 24 * 60 * 60 * 1000; // 24 horas
 
+const IMAGE_BASE_URL =
+  "https://raw.githubusercontent.com/vicencioesteban0-beep/airbnb-bot/main/images/";
+
+// Mapa de etiquetas a archivos de imagen
+const IMAGE_MAP = {
+  living:        "living.jpg",
+  cocina:        "cocina.jpg",
+  agua:          "agua.jpg",
+  vino:          "vino.jpg",
+  bano:          "bano.jpg",
+  dispensadores: "dispensadores.jpg",
+  lavadora:      "lavadora.jpg",
+  velador:       "velador.jpg",
+};
+
+// Extrae etiquetas [IMAGE:key] del texto y devuelve { cleanText, imageKeys }
+function extractImageTags(text) {
+  const imageKeys = [];
+  const cleanText = text.replace(/\[IMAGE:(\w+)\]/g, (match, key) => {
+    if (IMAGE_MAP[key]) imageKeys.push(key);
+    return "";
+  }).trim();
+  return { cleanText, imageKeys };
+}
+
 // Historial de conversaciones por número de teléfono
 // { phoneNumber: { messages: [...], lastActivity: Date } }
 const conversations = new Map();
@@ -90,15 +115,26 @@ app.post("/webhook", async (req, res) => {
       messages: conv.messages,
     });
 
-    const assistantText = response.content
+    const rawText = response.content
       .filter((block) => block.type === "text")
       .map((block) => block.text)
       .join("\n");
 
-    // Agregar respuesta del asistente al historial
-    conv.messages.push({ role: "assistant", content: assistantText });
+    // Extraer etiquetas de imagen y limpiar el texto
+    const { cleanText, imageKeys } = extractImageTags(rawText);
 
-    twiml.message(assistantText);
+    // Guardar en historial el texto limpio (sin etiquetas)
+    conv.messages.push({ role: "assistant", content: cleanText });
+
+    // Mensaje de texto principal
+    twiml.message(cleanText);
+
+    // Mensajes de imagen (uno por etiqueta detectada)
+    for (const key of imageKeys) {
+      const imageUrl = IMAGE_BASE_URL + IMAGE_MAP[key];
+      const msg = twiml.message("");
+      msg.media(imageUrl);
+    }
   } catch (err) {
     console.error("Error al procesar mensaje:", err);
     twiml.message("Ocurrió un error. Por favor intenta de nuevo en un momento.");
