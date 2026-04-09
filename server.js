@@ -11,6 +11,10 @@ const SYSTEM_PROMPT = fs.existsSync(path.join(__dirname, "system_prompt.txt"))
   ? fs.readFileSync(path.join(__dirname, "system_prompt.txt"), "utf8").trim()
   : process.env.SYSTEM_PROMPT || "Eres un asistente virtual de Airbnb.";
 
+const KNOWLEDGE_BASE = fs.existsSync(path.join(__dirname, "knowledge.txt"))
+  ? fs.readFileSync(path.join(__dirname, "knowledge.txt"), "utf8").trim()
+  : "";
+
 const app = express();
 
 app.use((req, res, next) => {
@@ -126,7 +130,7 @@ app.post("/webhook", async (req, res) => {
     const response = await anthropic.messages.create({
       model: MODEL,
       max_tokens: 1024,
-      system: SYSTEM_PROMPT,
+      system: SYSTEM_PROMPT + (KNOWLEDGE_BASE ? "\n\n=== BASE DE CONOCIMIENTO ===\n" + KNOWLEDGE_BASE : ""),
       messages: conv.messages,
     });
 
