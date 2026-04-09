@@ -26,8 +26,7 @@ const MODEL = "claude-haiku-4-5";
 const MAX_TURNS = 10;
 const INACTIVITY_MS = 24 * 60 * 60 * 1000; // 24 horas
 
-const IMAGE_BASE_URL =
-  "https://raw.githubusercontent.com/vicencioesteban0-beep/airbnb-bot/main/images/";
+const IMAGE_BASE_URL = "https://github.com/vicencioesteban0-beep/airbnb-bot/blob/main/images/";
 
 // Mapa de etiquetas a archivos de imagen
 const IMAGE_MAP = {
@@ -131,7 +130,7 @@ app.post("/webhook", async (req, res) => {
 
     // Mensajes de imagen (uno por etiqueta detectada)
     for (const key of imageKeys) {
-      const imageUrl = IMAGE_BASE_URL + IMAGE_MAP[key];
+      const imageUrl = IMAGE_BASE_URL + IMAGE_MAP[key] + "?raw=true";
       const msg = twiml.message("");
       msg.media(imageUrl);
     }
