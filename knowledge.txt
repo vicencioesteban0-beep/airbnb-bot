@@ -12,8 +12,9 @@ Paso 1: Llegar a Fay Camilo Henríquez 171.
 Paso 2: El conserje verificará identidad con pasaporte o cédula de identidad. Previamente Esteban te solicitó tus datos y los ingreso en la aplicación del edificio.
 Paso 3: Una vez verificado, debes subir al ascensor al piso 6
 Paso 4: Buscar el Departamento 611.A Al salir del asesor debes doblar a la derecha. La puerta tiene cerradura digital.
-Paso 5: El código de acceso fue enviado por Esteban por el chat de Airbnb antes de la llegada.
-Paso 6: Si no se tiene el código, revisar mensajes de Airbnb o contactar a Esteban al +56 9 5103 0801.
+Paso 5: El código de acceso son los últimos 7 dígitos del número de teléfono registrado en Airbnb.
+Paso 6: Ingresar el código en la cerradura digital y presionar # al final para desbloquear la puerta.
+Ejemplo: si el número es +56 9 1234 567, el código es 1234567#
 
 WIFI:
 Red: WiFi_Mesh-941805
@@ -31,7 +32,7 @@ Buscar el símbolo en la pared.
 
 CONTACTO ANFITRIÓN:
 Nombre: Esteban
-WhatsApp: +56 9 5103 0801
+WhatsApp: +56 9 7754 1568
 Airbnb chat: disponible con traducción instantánea incorporada.
 
 === BLOQUE 2 — ELECTRODOMÉSTICOS Y EQUIPAMIENTO ===
@@ -114,7 +115,7 @@ Verificar que la puerta principal y todas las ventanas queden bien cerradas al s
 🛎️ SERVICIOS ON DEMAND
 •	¿Necesitas algo más para hacer tu viaje perfecto? Ofrecemos diversos servicios on demand pensados en tu comodidad. Solo debes consultar por lo que requieras y gestionaremos tu solicitud.
 📱 CÓMO SOLICITAR Y MEDIOS DE PAGO
-•	Contacto: Puedes solicitar la tabla de quesos o cualquier otro servicio con anticipación escribiendo directamente a través del chat de la aplicación de Airbnb, o contactando a Esteban al número +56 9 5103 0801.
+•	Contacto: Puedes solicitar la tabla de quesos o cualquier otro servicio con anticipación escribiendo directamente a través del chat de la aplicación de Airbnb, o contactando a Esteban al número +56 9 7754 1568.
 •	Pagos: Para tu total seguridad y transparencia, todos los pagos se pueden realizar directamente mediante la plataforma de Airbnb. Alternativamente, se te puede enviar un enlace de pago rápido y seguro a través de MercadoPago.
 
 === BLOQUE 5 — GASTRONOMÍA VERIFICADA ===
