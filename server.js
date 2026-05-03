@@ -15,6 +15,8 @@ const KNOWLEDGE_BASE = fs.existsSync(path.join(__dirname, "knowledge.txt"))
   ? fs.readFileSync(path.join(__dirname, "knowledge.txt"), "utf8").trim()
   : "";
 
+const HOST_WHATSAPP = process.env.HOST_WHATSAPP_NUMBER || 'whatsapp:+56977541568';
+
 const app = express();
 
 app.use((req, res, next) => {
