@@ -99,6 +99,84 @@ function pruneOldConversations() {
 // Limpiar conversaciones inactivas cada hora
 setInterval(pruneOldConversations, 60 * 60 * 1000);
 
+// ─── KEYWORDS DE ALERTA ───────────────────────────────────────────────────────
+
+const URGENCY_KEYWORDS = [
+  "urgente", "urgent", "urgency",
+  "emergencia", "emergency",
+  "no puedo entrar", "cant get in", "cannot enter", "locked out",
+  "necesito al anfitrión", "necesito al anfitrion", "need the host", "anfitrion",
+  "llámame", "llamame", "call me", "necesito hablar",
+  "problema grave", "serious problem",
+  "accidente", "accident",
+  "me robaron", "robaron", "stolen",
+  "perdí las llaves", "perdi las llaves", "lost my keys",
+  "socorro", "help me", "ayuda urgente",
+  "necesito que me contacten", "contact me", "contacte",
+];
+
+const SERVICE_KEYWORDS = [
+  "tabla de quesos", "cheese board", "quesos",
+  "vinos", "wine", "vino chileno",
+  "servicio adicional", "quiero ordenar", "quiero pedir",
+  "i want to order", "me gustaría pedir", "me gustaria pedir",
+];
+
+const CHECKOUT_KEYWORDS = [
+  "checkout", "check out",
+  "me voy", "estoy saliendo", "ya salí", "ya sali",
+  "leaving", "i am leaving", "saindo",
+];
+
+async function checkAndSendAlert(userMessage, fromNumber) {
+  try {
+    const msg = userMessage.toLowerCase();
+    const guestPhone = fromNumber.replace("whatsapp:", "");
+
+    let alertType = null;
+
+    if (URGENCY_KEYWORDS.some((kw) => msg.includes(kw))) {
+      alertType = "urgency";
+    } else if (SERVICE_KEYWORDS.some((kw) => msg.includes(kw))) {
+      alertType = "service";
+    } else if (CHECKOUT_KEYWORDS.some((kw) => msg.includes(kw))) {
+      alertType = "checkout";
+    }
+
+    if (!alertType) return;
+
+    let alertMessage;
+
+    if (alertType === "urgency") {
+      alertMessage =
+        `🚨 LLAMA AHORA — Depto 611\n` +
+        `Huésped necesita contacto urgente.\n` +
+        `📞 Llama a este número: ${guestPhone}\n` +
+        `💬 Escribió: "${userMessage}"`;
+    } else if (alertType === "service") {
+      alertMessage =
+        `🍷 SERVICIO SOLICITADO — Depto 611\n` +
+        `📞 Número huésped: ${guestPhone}\n` +
+        `💬 Solicitó: "${userMessage}"`;
+    } else {
+      alertMessage =
+        `✅ CHECKOUT — Depto 611\n` +
+        `📞 Número: ${guestPhone}\n` +
+        `💬 Mensaje: "${userMessage}"`;
+    }
+
+    await twilioClient.messages.create({
+      from: process.env.TWILIO_WHATSAPP_NUMBER,
+      to: HOST_WHATSAPP,
+      body: alertMessage,
+    });
+
+    console.log(`[ALERTA ${alertType.toUpperCase()}] Enviada al host. Huésped: ${guestPhone}`);
+  } catch (err) {
+    console.error("[checkAndSendAlert] Error al enviar alerta:", err.message);
+  }
+}
+
 app.post("/webhook", async (req, res) => {
   const twiml = new twilio.twiml.MessagingResponse();
 
@@ -120,6 +198,9 @@ app.post("/webhook", async (req, res) => {
     if (conv.messages.length > MAX_TURNS * 2) {
       conv.messages = conv.messages.slice(-MAX_TURNS * 2);
     }
+
+    // Verificar keywords y notificar al host si corresponde (en paralelo)
+    await checkAndSendAlert(incomingMsg, from);
 
     // Enviar mensaje de "pensando" antes de llamar a Claude
     const thinkingMsg = THINKING_MESSAGES[Math.floor(Math.random() * THINKING_MESSAGES.length)];
