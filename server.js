@@ -240,9 +240,16 @@ app.post("/webhook", async (req, res) => {
         try {
           const imageResponse = await fetch(mediaUrl, {
             headers: {
-              "Authorization": "Basic " + Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString("base64"),
+              "Authorization": "Basic " + Buffer.from(
+                `${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`
+              ).toString("base64"),
             },
           });
+
+          if (!imageResponse.ok) {
+            throw new Error(`Failed to fetch image: ${imageResponse.status}`);
+          }
+
           const imageBuffer = await imageResponse.arrayBuffer();
           const base64Image = Buffer.from(imageBuffer).toString("base64");
 
