@@ -232,6 +232,12 @@ app.post("/webhook", async (req, res) => {
 
     // ── FLUJO DEL ANFITRIÓN ────────────────────────────────────────────────────
     if (isHost(from)) {
+      console.log('=== HOST MESSAGE ===');
+      console.log('Body:', body);
+      console.log('MediaUrl0:', req.body.MediaUrl0);
+      console.log('MediaContentType0:', req.body.MediaContentType0);
+      console.log('NumMedia:', req.body.NumMedia);
+      console.log('All body keys:', Object.keys(req.body));
       const mediaUrl  = req.body.MediaUrl0;
       const mediaType = req.body.MediaContentType0;
 
